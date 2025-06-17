@@ -146,13 +146,13 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
 
   // Early cancel
   if (loading) {
-    return <div className="hero"><span>Loading quiz...</span></div>;
+    return <div className="hero" style={{ gap: 28 }}><span className="subtitle">Loading quiz...</span></div>;
   }
   if (!questions.length) {
     return (
-      <div className="hero">
-        <span>Failed to load questions. Please try again later.</span>
-        <button className="btn" onClick={onCancel}>Back</button>
+      <div className="hero" style={{ gap: 28 }}>
+        <span className="subtitle" style={{ color: "var(--secondary)" }}>Failed to load questions.<br />Please try again later.</span>
+        <button className="btn btn-large" style={{ background: "var(--secondary)" }} onClick={onCancel}>Back</button>
       </div>
     );
   }
@@ -160,43 +160,76 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
   const q = questions[currentIndex];
 
   return (
-    <div className="hero" style={{ gap: 14 }}>
-      <div className="subtitle">Question {currentIndex + 1} / {questions.length}</div>
-      <h2 className="title" style={{ color: "#0a0003", fontSize: "2rem" }}>{q.q}</h2>
+    <div className="hero" style={{ gap: 20, width: "100%" }}>
+      <div className="subtitle" style={{ marginBottom: 2, color: "var(--secondary)" }}>
+        Question <b>{currentIndex + 1} / {questions.length}</b>
+      </div>
+      <h2 className="title" style={{
+        color: "var(--accent)",
+        fontSize: "1.5rem",
+        marginBottom: q.kind === "guess" && q.poster ? 2 : 8,
+        letterSpacing: "-0.7px"
+      }}>{q.q}</h2>
       {q.kind === "guess" && q.poster &&
-        <img src={`https://image.tmdb.org/t/p/w400${q.poster}`}
-             alt="Movie poster"
-             style={{
-               maxHeight: 300,
-               borderRadius: 10,
-               outline: "2.5px solid #ff0597",
-               boxShadow: "0 6px 30px -8px #0a00033f",
-               marginBottom: 12
-             }}
+        <img
+          src={`https://image.tmdb.org/t/p/w400${q.poster}`}
+          alt="Movie poster"
+          style={{
+            maxHeight: 250,
+            borderRadius: 13,
+            outline: "2.8px solid var(--secondary)",
+            boxShadow: "0 8px 40px -10px #ff059755",
+            marginBottom: 8
+          }}
         />
       }
-      <div style={{ display: "flex", flexDirection: "column", gap: 15, marginBottom: 9, alignItems: "center" }}>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 13,
+        marginBottom: 10,
+        alignItems: "center",
+        width: "100%",
+        maxWidth: 420
+      }}>
         {q.opts.map(opt => {
           const answered = showCorrect || answers[currentIndex];
           let bg = "#f4f6fa";
+          let color = "var(--accent)";
+          let border = "1.6px solid #c7c7d0";
           if (answered) {
-            if (opt === q.answer) bg = "#79ef90";
-            else if (opt === selected) bg = "#ff7f9e";
-          } else if (opt === selected) bg = "#ff0597";
+            if (opt === q.answer) {
+              bg = "#dafae2";
+              color = "var(--success)";
+              border = "2px solid #17a856";
+            }
+            else if (opt === selected) {
+              bg = "#ffe3ef";
+              color = "var(--secondary)";
+              border = "2px solid var(--secondary)";
+            }
+          } else if (opt === selected) {
+            bg = "var(--secondary)";
+            color = "#fff";
+            border = "2.2px solid var(--secondary)";
+          }
           return (
             <button
               className="btn"
               key={opt}
+              tabIndex={0}
               onClick={() => setSelected(opt)}
               disabled={showCorrect || !!answers[currentIndex]}
               style={{
                 minWidth: 190,
                 background: bg,
-                color: bg === "#ff0597" ? "white" : "#0a0003",
-                border: bg === "#ff0597" ? "none" : "1.4px solid #0a0003",
-                marginBottom: 4,
-                cursor: "pointer",
-                fontWeight: 500,
+                color,
+                border,
+                marginBottom: 2,
+                fontWeight: 530,
+                letterSpacing: 0,
+                fontSize: "1.1rem",
+                boxShadow: bg === "var(--secondary)" ? "0 4px 16px -7px #ff05977b" : "none"
               }}
             >{opt}</button>
           );
@@ -205,15 +238,26 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
       {!answers[currentIndex] && (
         <button
           className="btn btn-large"
-          style={{ background: "#ff0597", marginTop: 16 }}
+          style={{
+            background: selected ? "var(--secondary)" : "#eee",
+            color: selected ? "#fff" : "var(--text-gray)",
+            marginTop: 10,
+            minWidth: 115
+          }}
           disabled={!selected}
           onClick={submitAnswer}
         >
-          {currentIndex === questions.length - 1 ? "Finish" : "Next"}
+          {currentIndex === questions.length - 1 ? "Finish" : "Next →"}
         </button>
       )}
-      <button className="btn" onClick={onCancel}
-        style={{ background: "#0a0003", marginTop: 16 }}>
+      <button className="btn"
+        onClick={onCancel}
+        style={{
+          background: "var(--accent)",
+          color: "#fff",
+          marginTop: 12,
+          minWidth: 96
+        }}>
         Cancel
       </button>
     </div>

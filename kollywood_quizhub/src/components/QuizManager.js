@@ -27,25 +27,23 @@ export function QuizManager({ onBack }) {
         display: "flex",
         gap: 22,
         justifyContent: "center",
-        marginTop: 30,
+        marginTop: 26,
         flexWrap: "wrap"
       }}>
         {QUIZ_TYPES.map(qt => (
-          <div key={qt.type} style={{
-            background: "#fff",
-            color: "#0a0003",
-            border: "2px solid #ff0597",
-            borderRadius: 8,
-            padding: "22px 16px",
-            width: 280,
-            margin: 6
+          <div key={qt.type} className="quiz-card" style={{
+            width: 260,
+            border: "2px solid var(--secondary)",
+            boxShadow: "0 2px 16px -9px #ff059735",
+            margin: 6,
+            color: "var(--accent)"
           }}>
-            <b>{qt.title}</b>
-            <div style={{ marginTop: 10 }}>{qt.description}</div>
+            <b style={{ color: "var(--secondary)" }}>{qt.title}</b>
+            <div style={{ marginTop: 9, color: "#6f507e" }}>{qt.description}</div>
           </div>
         ))}
       </div>
-      <button className="btn btn-large" style={{ background: "#ff0597", marginTop: 26 }} onClick={onBack}>
+      <button className="btn btn-large" style={{ background: "var(--secondary)", marginTop: 26 }} onClick={onBack}>
         Back to Game
       </button>
     </div>

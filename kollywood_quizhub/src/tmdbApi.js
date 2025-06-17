@@ -5,6 +5,8 @@
 // Provides both generic helpers and Kollywood-focused queries/reusable hooks.
 //
 
+import { useState, useEffect, useCallback } from "react";
+
 const TMDB_API_KEY = "5bc67d3b06aecbd18121a3cbbc16eb59";
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TAMIL_LANGUAGE_CODE = "ta-IN";
@@ -77,7 +79,6 @@ export function getMovieDetails(movieId) {
  * @param {{query?: string, page?: number}} options - Query search or popular, and page
  * @returns {object} loading, movies, error, reload
  */
-import { useState, useEffect, useCallback } from "react";
 export function useKollywoodMovies({ query = "", page = 1 } = {}) {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -98,3 +99,4 @@ export function useKollywoodMovies({ query = "", page = 1 } = {}) {
   }, [fetcher]);
   return { loading, movies, error, reload: fetcher };
 }
+

@@ -32,70 +32,96 @@ export function GameSelector({ startQuiz, user }) {
 
   return (
     <div>
-      <div className="hero" style={{ marginBottom: 36 }}>
-        <div className="subtitle">Welcome, {user?.name || ""}! Select your Kollywood movie quiz type:</div>
-        <h2 className="title" style={{ fontSize: "2.3rem", color: "#0a0003" }}>Choose Your Challenge</h2>
+      <div className="hero" style={{ marginBottom: 24 }}>
+        <div className="subtitle" style={{ fontWeight: 590 }}>
+          <span role="img" aria-label="popcorn" style={{ marginRight: 4 }}>🍿</span>
+          Welcome, {user?.name || ""}! Select your Kollywood movie quiz type:
+        </div>
+        <h2 className="title" style={{ fontSize: "2.1rem", color: "var(--accent)", marginBottom: "0.3em" }}>
+          Choose Your Challenge
+        </h2>
       </div>
       <div style={{
         display: "flex",
+        flexWrap: "wrap",
         justifyContent: "center",
-        gap: 40
+        gap: 30,
+        marginBottom: 22
       }}>
         {QUIZ_TYPES.map((qt) => (
           <div
             key={qt.type}
-            className="quiz-card"
+            className={"quiz-card" + (selectedType === qt.type ? " selected" : "")}
+            tabIndex={0}
+            aria-label={qt.title}
             style={{
-              background: "#fff",
-              border: `2.5px solid ${qt.accent}`,
-              borderRadius: 11,
-              padding: 24,
-              boxShadow: "0 2.5px 10px 0 rgba(0,0,0,0.07)",
-              minWidth: 240,
+              border: `2.3px solid ${selectedType === qt.type ? "var(--secondary)" : qt.accent}`,
+              minWidth: 210,
               cursor: "pointer",
-              display: "flex", flexDirection: "column", alignItems: "start",
-              transition: "box-shadow 0.2s, border 0.2s",
-              ...(selectedType === qt.type ? { boxShadow: "0 2px 26px #ff05976c", border: "2.5px solid #ff0597" } : {})
+              alignItems: "start",
+              userSelect: "none",
+              outline: "none",
+              boxShadow: selectedType === qt.type ? "0 5px 32px -6px #ff059755" : "0 2px 10px 0 rgba(0,0,0,0.11)"
             }}
             onClick={() => setSelectedType(qt.type)}
+            onKeyDown={e => (e.key === "Enter" || e.key === " ") && setSelectedType(qt.type)}
           >
-            <div style={{ color: qt.accent, fontWeight: 600, marginBottom: 10 }}>
+            <div style={{
+              color: qt.accent,
+              fontWeight: 660,
+              fontSize: "1.14rem",
+              marginBottom: 12,
+              letterSpacing: 0
+            }}>
               {qt.title}
             </div>
-            <div style={{ color: "#676767", minHeight: 60 }}>{qt.description}</div>
-            <input
-              type="radio"
-              name="quiz-type"
-              style={{ marginTop: 10 }}
-              checked={selectedType === qt.type}
-              onChange={() => setSelectedType(qt.type)}
-            />
+            <div style={{ color: "var(--text-gray)", minHeight: 55, marginBottom: 10 }}>
+              {qt.description}
+            </div>
+            <div style={{ marginTop: 7 }}>
+              <input
+                type="radio"
+                name="quiz-type"
+                checked={selectedType === qt.type}
+                onChange={() => setSelectedType(qt.type)}
+                style={{ marginRight: 3 }}
+                tabIndex={-1}
+              /> Select
+            </div>
           </div>
         ))}
       </div>
       <div style={{
-        display: "flex", justifyContent: "center", gap: 28, alignItems: "center", marginTop: 34
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        gap: 16,
+        alignItems: "center",
+        marginTop: 20
       }}>
-        <label style={{ color: "#676767", fontSize: "1.09rem" }}>Number of Questions:</label>
+        <label htmlFor="question-num" style={{ color: "var(--text-gray)", fontSize: "1.12rem" }}>Number of Questions:</label>
         <input
+          id="question-num"
+          className="input"
           type="number"
           min="3"
           max="10"
           value={numQuestions}
-          onChange={e => setNumQuestions(e.target.value)}
+          onChange={e => {
+            if (e.target.value >= 3 && e.target.value <= 10) setNumQuestions(e.target.value);
+          }}
           style={{
-            padding: "7px 10px",
-            border: "1.5px solid #0a0003",
-            borderRadius: 4,
-            fontSize: "1rem",
-            width: 57
+            width: 62
           }}
         />
         <button
           className="btn btn-large"
-          style={{ marginLeft: 36, background: "#ff0597" }}
+          style={{ marginLeft: 20, background: "var(--secondary)" }}
           onClick={handleStart}
-        >Start Quiz</button>
+        >
+          Start Quiz
+        </button>
       </div>
     </div>
   );

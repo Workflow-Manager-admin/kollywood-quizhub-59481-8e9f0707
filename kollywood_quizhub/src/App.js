@@ -61,23 +61,31 @@ function App() {
   return (
     <div className="app kollywood-bg">
       <nav className="navbar">
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="logo">
-            <span className="logo-symbol" style={{ color: "#ff0597" }}>🎬</span>
-            <span style={{ color: "#0a0003", fontWeight: 700 }}>Kollywood QuizHub</span>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: "100%" }}>
+          <div className="logo" tabIndex={0}>
+            <span className="logo-symbol" role="img" aria-label="Kollywood icon">🎬</span>
+            <span style={{
+              color: "var(--accent)",
+              fontWeight: 700,
+              textShadow: "0 2px 10px #ff059728,0 4px 26px #fff3"
+            }}>Kollywood QuizHub</span>
           </div>
           {user && (
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <span style={{ color: "#0a0003", fontWeight: 500 }}>{user.name}</span>
-              <button className="btn" onClick={gotoManage} style={{ background: "#ff0597" }}>Quiz Manager</button>
-              <button className="btn" onClick={logout} style={{ background: "#0a0003" }}>Logout</button>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+              <span style={{
+                color: "var(--accent)",
+                fontWeight: 600,
+                fontSize: "1.07rem"
+              }}>{user.name}</span>
+              <button className="btn" style={{ background: "var(--secondary)" }} onClick={gotoManage}>Quiz Manager</button>
+              <button className="btn" style={{ background: "var(--accent)" , color: "#fff"}} onClick={logout}>Logout</button>
             </div>
           )}
         </div>
       </nav>
 
       <main>
-        <div className="container" style={{ paddingTop: "90px" }}>
+        <div className="container" style={{ paddingTop: "36px" }}>
           {currentScreen === "login" && <Login onLogin={doLogin} />}
           {currentScreen === "select" && <GameSelector startQuiz={startQuiz} user={user} />}
           {currentScreen === "quiz" && quizConfig && (
