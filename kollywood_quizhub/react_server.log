@@ -22,4 +22,194 @@ modules by path ./.ve/ 15.1 KiB
     ./.ve/EditorOverlay.css 2.25 KiB [built] [code generated]
     ./node_modules/css-loader/dist/cjs.js!./.ve/EditorOverlay.css 697 bytes [built] [code generated]
   ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 1200 ms
+webpack 5.99.9 compiled successfully in 1175 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.41 MiB
+  asset bundle.js 1.4 MiB [emitted] (name: main)
+  asset main.6fc9cce9d02ff681648c.hot-update.js 9.46 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.6fc9cce9d02ff681648c.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.41 MiB = bundle.js 1.4 MiB main.6fc9cce9d02ff681648c.hot-update.js 9.46 KiB
+cached modules 1.26 MiB [cached] 41 modules
+runtime modules 27.5 KiB 14 modules
+./src/App.js 5.18 KiB [built] [code generated]
+
+ERROR in ./src/App.js 3:0-43
+Module not found: Error: Can't resolve './components/Login' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 4:0-57
+Module not found: Error: Can't resolve './components/GameSelector' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 5:0-49
+Module not found: Error: Can't resolve './components/QuizGame' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 6:0-49
+Module not found: Error: Can't resolve './components/Progress' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 7:0-55
+Module not found: Error: Can't resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+5 errors have detailed information that is not shown.
+Use 'stats.errorDetails: true' resp. '--stats-error-details' to show it.
+
+webpack 5.99.9 compiled with 5 errors in 100 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.41 MiB
+  asset bundle.js 1.4 MiB [emitted] (name: main)
+  asset main.6cd62b83fb12c82fc0ce.hot-update.js 13.5 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.6cd62b83fb12c82fc0ce.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.41 MiB = bundle.js 1.4 MiB main.6cd62b83fb12c82fc0ce.hot-update.js 13.5 KiB
+cached modules 1.26 MiB [cached] 41 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 7.81 KiB
+  ./src/App.js 5.18 KiB [code generated]
+  ./src/components/Login.js 2.63 KiB [built] [code generated]
+
+ERROR in ./src/App.js 4:0-57
+Module not found: Error: Can't resolve './components/GameSelector' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 5:0-49
+Module not found: Error: Can't resolve './components/QuizGame' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 6:0-49
+Module not found: Error: Can't resolve './components/Progress' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 7:0-55
+Module not found: Error: Can't resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+4 errors have detailed information that is not shown.
+Use 'stats.errorDetails: true' resp. '--stats-error-details' to show it.
+
+webpack 5.99.9 compiled with 4 errors in 61 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.42 MiB
+  asset bundle.js 1.41 MiB [emitted] (name: main)
+  asset main.aada70c635353bc3c99f.hot-update.js 15.9 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.aada70c635353bc3c99f.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.42 MiB = bundle.js 1.41 MiB main.aada70c635353bc3c99f.hot-update.js 15.9 KiB
+cached modules 1.26 MiB [cached] 42 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 9.84 KiB
+  ./src/App.js 5.18 KiB [code generated]
+  ./src/components/GameSelector.js 4.66 KiB [built] [code generated]
+
+ERROR in ./src/App.js 5:0-49
+Module not found: Error: Can't resolve './components/QuizGame' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 6:0-49
+Module not found: Error: Can't resolve './components/Progress' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 7:0-55
+Module not found: Error: Can't resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+ @ ./src/index.js 5:0-24 11:32-35
+
+3 errors have detailed information that is not shown.
+Use 'stats.errorDetails: true' resp. '--stats-error-details' to show it.
+
+webpack 5.99.9 compiled with 3 errors in 60 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.45 MiB
+  asset bundle.js 1.42 MiB [emitted] (name: main)
+  asset main.f9510d1ea346aa6393cf.hot-update.js 24.6 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.f9510d1ea346aa6393cf.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.45 MiB = bundle.js 1.42 MiB main.f9510d1ea346aa6393cf.hot-update.js 24.6 KiB
+cached modules 1.27 MiB [cached] 43 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 16.9 KiB
+  ./src/App.js 5.18 KiB [code generated]
+  ./src/components/QuizGame.js 8.12 KiB [built] [code generated]
+  ./src/tmdbApi.js 3.63 KiB [built] [code generated]
+
+ERROR in ./src/App.js 6:0-49
+Module not found: Error: Can't resolve './components/Progress' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+resolve './components/Progress' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+  using description file: /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/package.json (relative path: ./src)
+    Field 'browser' doesn't contain a valid alias configuration
+    using description file: /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/package.json (relative path: ./src/components/Progress)
+      no extension
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/Progress doesn't exist
+      .js
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/Progress.js doesn't exist
+      .jsx
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/Progress.jsx doesn't exist
+      as directory
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/Progress doesn't exist
+ @ ./src/index.js 5:0-24 11:32-35
+
+ERROR in ./src/App.js 7:0-55
+Module not found: Error: Can't resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+  using description file: /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/package.json (relative path: ./src)
+    Field 'browser' doesn't contain a valid alias configuration
+    using description file: /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/package.json (relative path: ./src/components/QuizManager)
+      no extension
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager doesn't exist
+      .js
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager.js doesn't exist
+      .jsx
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager.jsx doesn't exist
+      as directory
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager doesn't exist
+ @ ./src/index.js 5:0-24 11:32-35
+
+webpack 5.99.9 compiled with 2 errors in 92 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.44 MiB
+  asset bundle.js 1.43 MiB [emitted] (name: main)
+  asset main.61c05b3290f34dd49ed9.hot-update.js 14.8 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.61c05b3290f34dd49ed9.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.44 MiB = bundle.js 1.43 MiB main.61c05b3290f34dd49ed9.hot-update.js 14.8 KiB
+cached modules 1.28 MiB [cached] 45 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 8.88 KiB
+  ./src/App.js 5.18 KiB [code generated]
+  ./src/components/Progress.js 3.7 KiB [built] [code generated]
+
+ERROR in ./src/App.js 7:0-55
+Module not found: Error: Can't resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+resolve './components/QuizManager' in '/home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src'
+  using description file: /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/package.json (relative path: ./src)
+    Field 'browser' doesn't contain a valid alias configuration
+    using description file: /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/package.json (relative path: ./src/components/QuizManager)
+      no extension
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager doesn't exist
+      .js
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager.js doesn't exist
+      .jsx
+        Field 'browser' doesn't contain a valid alias configuration
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager.jsx doesn't exist
+      as directory
+        /home/kavia/workspace/code-generation/kollywood-quizhub-59481-8e9f0707/kollywood_quizhub/src/components/QuizManager doesn't exist
+ @ ./src/index.js 5:0-24 11:32-35
+
+webpack 5.99.9 compiled with 1 error in 57 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.44 MiB
+  asset bundle.js 1.43 MiB [emitted] (name: main)
+  asset main.336a4e0ff59e24fe9228.hot-update.js 12.8 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.336a4e0ff59e24fe9228.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.44 MiB = bundle.js 1.43 MiB main.336a4e0ff59e24fe9228.hot-update.js 12.8 KiB
+cached modules 1.28 MiB [cached] 46 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 7.49 KiB
+  ./src/App.js 5.18 KiB [code generated]
+  ./src/components/QuizManager.js 2.31 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 42 ms
