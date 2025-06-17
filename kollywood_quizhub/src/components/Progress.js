@@ -34,9 +34,11 @@ export function Progress({ result, user, onRestart, quizState }) {
           {answers && answers.map((a, i) => (
             <li key={i} style={{ marginBottom: 7, fontWeight: 470, listStyleType: "decimal" }}>
               <span>{
-                typeof a.question.q === "string"
-                  ? a.question.q.replace(/"([^"]+)"/g, (m, $1) => <b key={i}>&quot;{$1}&quot;</b>)
-                  : a.question.q
+                a.question.kind === "character"
+                  ? <>Movie Character: <b style={{ color: "#23b925" }}>{a.question.character}</b> (Which movie?)</>
+                  : typeof a.question.q === "string"
+                    ? a.question.q.replace(/"([^"]+)"/g, (m, $1) => <b key={i}>&quot;{$1}&quot;</b>)
+                    : a.question.q
               } </span>
               <br />
               <span style={{

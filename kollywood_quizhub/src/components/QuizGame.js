@@ -31,11 +31,9 @@ async function generateQuestions({ type, numQuestions }) {
   // Helper: extract main actor name from movie cast, fallback if missing
   async function getMainActor(movieId) {
     try {
-      // Fetch cast if possible
       const resp = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=5bc67d3b06aecbd18121a3cbbc16eb59`);
       const data = await resp.json();
       if (data.cast && data.cast.length > 0) {
-        // Sometimes the top billed actor is at index 0; fallback if not Tamil star
         const tamilStar = data.cast.find(
           c => ["Vijay", "Ajith Kumar", "Kamal Haasan", "Rajinikanth", "Suriya", "Karthi", "Dhanush", "Vikram"].includes(c.name)
         );
@@ -43,6 +41,23 @@ async function generateQuestions({ type, numQuestions }) {
       }
     } catch (e) { /* ignore */ }
     return "Unknown";
+  }
+
+  // Helper: extract a (likely) named character from a cast list (priority: familiar, then any)
+  function extractCharacterName(movieCast) {
+    // Use a common Tamil character if present, else pick the first non-empty
+    if (!Array.isArray(movieCast) || movieCast.length === 0) return null;
+    const knownCharacters = [
+      "Vasu", "Anbu", "Durai", "Arjun", "Selvam", "Chandru", "Shankar", "Surya", "Meera", "Vijay", "Rani", "Divya",
+      "Perumal", "Raghu", "Chinna", "Saravanan", "Nila", "Anjali", "Raja"
+    ];
+    // priority: first matching knownCharacters (with enough length), fallback: first decent
+    const pref = movieCast.find(
+      m => m.character && knownCharacters.includes(m.character) && m.character.length >= 3
+    );
+    if (pref && pref.character) return pref.character;
+    const decent = movieCast.find(m => typeof m.character === "string" && m.character.length >= 3);
+    return decent ? decent.character : null;
   }
 
   while (questions.length < numQuestions && moviesPage <= 5) {
@@ -59,7 +74,7 @@ async function generateQuestions({ type, numQuestions }) {
     for (let movie of shuffle([...movies])) {
       if (questions.length >= numQuestions) break;
 
-      // Movie Timeline mode: guess the release year (formerly "facts")
+      // Movie Timeline mode: guess the release year
       if (type === "timeline") {
         questions.push({
           kind: "timeline",
@@ -71,10 +86,8 @@ async function generateQuestions({ type, numQuestions }) {
       }
       // Guess the Movie mode: add actor & year clue
       else if (type === "guess") {
-        // Fetch actor as clue (async). Choose sync fallback if not possible
         let actorName = "Kollywood actor";
         try {
-          // Try for main actor by id
           actorName = await getMainActor(movie.id);
         } catch (e) { actorName = "Kollywood actor"; }
         questions.push({
@@ -89,7 +102,31 @@ async function generateQuestions({ type, numQuestions }) {
             year: (movie.release_date || "").slice(0, 4)
           }
         });
-      } else if (type === "facts") {
+      }
+      // Movie Character Match mode
+      else if (type === "character") {
+        // Fetch credits for this movie to obtain character names
+        let cast = [], charName = null;
+        try {
+          const resp = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=5bc67d3b06aecbd18121a3cbbc16eb59`);
+          cast = ((await resp.json()).cast || []);
+          charName = extractCharacterName(cast);
+        } catch (e) {
+          charName = null;
+        }
+        // Fallback if not present, skip if no valid character
+        if (!charName || charName.toLowerCase() === "self") continue;
+        questions.push({
+          kind: "character",
+          q: `Which Kollywood movie features the character "${charName}"?`,
+          character: charName,
+          opts: genTitleChoices(movie.title, movies),
+          answer: movie.title,
+          movie
+        });
+      }
+      // Deprecated: old "facts" mode (unused)
+      else if (type === "facts") {
         questions.push({
           kind: "facts",
           q: `In which YEAR was "${movie.title}" released?`,
@@ -97,17 +134,9 @@ async function generateQuestions({ type, numQuestions }) {
           answer: (movie.release_date || "").slice(0, 4),
           movie
         });
-      } else if (type === "actor") {
-        // Use 'cast' from movie details in a real app; here, simulate with movie "overview" for the clue.
-        questions.push({
-          kind: "actor",
-          q: "Guess the main actor from this (simulated) clue:",
-          clue: (movie.overview || "").split(" ").slice(0, 7).join(" ") + "...",
-          opts: genActorChoices("Vijay", movies), // TODO: random/real actor; mock "Vijay" here.
-          answer: "Vijay",
-          movie
-        });
-      } else if (type === "desc") {
+      }
+      // Deprecated: old "actor" mode removed
+      else if (type === "desc") {
         questions.push({
           kind: "desc",
           q: "Given this movie description, can you guess the movie?",
@@ -321,21 +350,32 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
         </div>
       )}
 
-      {/* Render Guess the Actor clue */}
-      {q.kind === "actor" && (
+      {/* Movie Character Match mode UI */}
+      {q.kind === "character" && (
         <div style={{
-          background: "#fff9ff",
+          background: "#f3fff9",
           color: "var(--accent)",
           borderRadius: 8,
-          border: "1.5px solid #eecff9",
-          boxShadow: "0 2px 8px #b32bc06b",
-          padding: 16,
-          marginBottom: 8
+          border: "1.7px solid #23b92544",
+          boxShadow: "0 2px 10px -4px #23b9251a",
+          padding: 14,
+          marginBottom: 7
         }}>
-          <div style={{ fontWeight: 590, marginBottom: 5 }}>
-            <span style={{ color: "#23b925" }}>Clue:</span>
+          <div style={{
+            fontWeight: 580,
+            color: "#23b925",
+            marginBottom: 5,
+            fontSize: "1.08em"
+          }}>
+            Character Name: <span style={{
+              color: "#0a0030",
+              fontWeight: 700,
+              marginLeft: 4
+            }}>{q.character}</span>
           </div>
-          <span style={{ color: "var(--text-gray)", fontStyle: "italic" }}>{q.clue || "Kollywood star clue"}</span>
+          <span style={{ color: "#708390" }}>
+            Select the correct Kollywood movie that features this character.
+          </span>
         </div>
       )}
 

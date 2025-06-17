@@ -2,11 +2,11 @@ import React, { useState } from "react";
 
 /**
  * Quiz game types offered.
- * Ensures 4 distinct quiz/game modes:
- *  - Movie Facts (General Kollywood Questions)
- *  - Guess the Movie (Poster/Clue based)
- *  - Guess the Actor (Based on a picture/description)
- *  - Movie Description Challenge (Identify a movie by its description/overview)
+ * Game modes:
+ *  - Movie Timeline: Guess the release year
+ *  - Guess the Movie: Poster/Clue based
+ *  - Movie Character Match: Given a character name, pick/type the correct movie title
+ *  - Movie Description Challenge: Identify a movie from its description
  */
 const QUIZ_TYPES = [
   {
@@ -22,9 +22,9 @@ const QUIZ_TYPES = [
     accent: "#0a0003"
   },
   {
-    type: "actor",
-    title: "Guess the Actor",
-    description: "Can you identify the Kollywood actor or actress from their picture or clue?",
+    type: "character",
+    title: "Movie Character Match",
+    description: "Given a movie character's name (from Kollywood), select the correct movie title.",
     accent: "#23b925"
   },
   {

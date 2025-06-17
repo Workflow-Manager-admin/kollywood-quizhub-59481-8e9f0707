@@ -16,9 +16,9 @@ const QUIZ_TYPES = [
     description: "Show a blurred Tamil movie poster, and guess the right movie.",
   },
   {
-    type: "actor",
-    title: "Guess the Actor",
-    description: "Given a clue, identify the Kollywood actor or actress.",
+    type: "character",
+    title: "Movie Character Match",
+    description: "Given the name of a Kollywood character, pick which movie they belong to.",
   },
   {
     type: "desc",
