@@ -13,7 +13,17 @@ const QUIZ_TYPES = [
   {
     type: "guess",
     title: "Guess the Movie",
-    description: "Show a Tamil movie poster, and guess the right movie.",
+    description: "Show a blurred Tamil movie poster, and guess the right movie.",
+  },
+  {
+    type: "actor",
+    title: "Guess the Actor",
+    description: "Given a clue, identify the Kollywood actor or actress.",
+  },
+  {
+    type: "desc",
+    title: "Movie Description Challenge",
+    description: "Guess the movie name just by reading its short description.",
   }
 ];
 
