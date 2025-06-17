@@ -20,10 +20,31 @@ function shuffle(a) {
   return a;
 }
 
-// Helper to generate quiz questions (async) based on quiz type and TMDB
+/**
+ * Helper to generate quiz questions (async) based on quiz type and TMDB
+ * Enhanced: Guess the Movie now includes two clues (actor and year as hidden hint).
+ */
 async function generateQuestions({ type, numQuestions }) {
   // Fetch a page of popular Tamil movies
   let moviesPage = 1, questions = [];
+
+  // Helper: extract main actor name from movie cast, fallback if missing
+  async function getMainActor(movieId) {
+    try {
+      // Fetch cast if possible
+      const resp = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=5bc67d3b06aecbd18121a3cbbc16eb59`);
+      const data = await resp.json();
+      if (data.cast && data.cast.length > 0) {
+        // Sometimes the top billed actor is at index 0; fallback if not Tamil star
+        const tamilStar = data.cast.find(
+          c => ["Vijay", "Ajith Kumar", "Kamal Haasan", "Rajinikanth", "Suriya", "Karthi", "Dhanush", "Vikram"].includes(c.name)
+        );
+        return (tamilStar ? tamilStar.name : data.cast[0].name) || "Unknown";
+      }
+    } catch (e) { /* ignore */ }
+    return "Unknown";
+  }
+
   while (questions.length < numQuestions && moviesPage <= 5) {
     // Fetch more as needed
     let moviesRes;
@@ -33,12 +54,32 @@ async function generateQuestions({ type, numQuestions }) {
       return [];
     }
     let movies = moviesRes.results || [];
-    movies = movies.filter(m => m.title && m.overview);
+    movies = movies.filter(m => m.title && m.overview && m.poster_path);
 
     for (let movie of shuffle([...movies])) {
       if (questions.length >= numQuestions) break;
-      // Prepare different question types
-      if (type === "facts") {
+
+      // Guess the Movie mode: add actor & year clue
+      if (type === "guess") {
+        // Fetch actor as clue (async). Choose sync fallback if not possible
+        let actorName = "Kollywood actor";
+        try {
+          // Try for main actor by id
+          actorName = await getMainActor(movie.id);
+        } catch (e) { actorName = "Kollywood actor"; }
+        questions.push({
+          kind: "guess",
+          q: "Guess the movie from this Tamil poster!",
+          poster: movie.poster_path,
+          opts: genTitleChoices(movie.title, movies),
+          answer: movie.title,
+          movie,
+          clues: {
+            actor: actorName,
+            year: (movie.release_date || "").slice(0, 4)
+          }
+        });
+      } else if (type === "facts") {
         questions.push({
           kind: "facts",
           q: `In which YEAR was "${movie.title}" released?`,
@@ -46,19 +87,8 @@ async function generateQuestions({ type, numQuestions }) {
           answer: (movie.release_date || "").slice(0, 4),
           movie
         });
-      } else if (type === "guess") {
-        questions.push({
-          kind: "guess",
-          q: "Guess the movie from this Tamil poster!",
-          poster: movie.poster_path,
-          opts: genTitleChoices(movie.title, movies),
-          answer: movie.title,
-          movie
-        });
       } else if (type === "actor") {
         // Use 'cast' from movie details in a real app; here, simulate with movie "overview" for the clue.
-        // We could fetch getMovieDetails(movie.id) but that would introduce a lot more async calls.
-        // For brevity use the first word of the overview as clue (not ideal, but suits the mock requirement).
         questions.push({
           kind: "actor",
           q: "Guess the main actor from this (simulated) clue:",
@@ -218,6 +248,41 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
           }}
         />
       }
+      {/* Enhanced Guess the Movie clues */}
+      {q.kind === "guess" && q.clues && (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+          alignItems: "center",
+          background: "#fcfcff",
+          borderRadius: 9,
+          border: "1.2px solid #ecd7f9",
+          boxShadow: "0 4px 14px -6px #c5abff2e",
+          margin: "0.5em 0 1em 0",
+          padding: "13px 18px 11px 18px",
+          minWidth: 240,
+          maxWidth: 390
+        }}>
+          <div style={{ fontWeight: 570, color: "#700b8e", marginBottom: 2, fontSize: "1.03em" }}>
+            🎭 Clues
+          </div>
+          {/* Clue 1: Main Actor */}
+          <div>
+            <span style={{
+              fontWeight: 600,
+              color: "#23b925",
+              marginRight: 4
+            }}>Clue 1 (Actor): </span>
+            <span style={{
+              color: "#0a0030",
+              fontWeight: 520
+            }}>{q.clues.actor || "Kollywood actor"}</span>
+          </div>
+          {/* Clue 2: Release Year (initially shown as a "reveal hint" button) */}
+          <GuessYearHint year={q.clues.year} alreadyAnswered={!!answers[currentIndex]} />
+        </div>
+      )}
 
       {/* Render Guess the Actor clue */}
       {q.kind === "actor" && (
@@ -331,6 +396,41 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
         }}>
         Cancel
       </button>
+    </div>
+  );
+}
+
+/**
+ * Clue 2 "Release Year" hint logic - initially hidden (unless question already answered), reveals on toggle.
+ */
+function GuessYearHint({ year, alreadyAnswered }) {
+  const [show, setShow] = React.useState(false);
+  // Auto-show if answered
+  React.useEffect(() => { if (alreadyAnswered) setShow(true); }, [alreadyAnswered]);
+  if (!year) return null;
+  return (
+    <div style={{ marginTop: 6 }}>
+      <span style={{
+        fontWeight: 600,
+        color: "#ff0597",
+        marginRight: 4
+      }}>Clue 2 (Release Year): </span>
+      {show ? (
+        <span style={{ color: "#ad23b9", fontWeight: 510 }}>{year}</span>
+      ) : (
+        <button
+          onClick={() => setShow(true)}
+          className="btn"
+          style={{
+            fontSize: "0.98em",
+            padding: "4px 10px",
+            marginLeft: 3,
+            background: "#ecd7f9",
+            color: "#700b8e",
+            border: "1px solid #ad23b988"
+          }}
+        >Show Hint</button>
+      )}
     </div>
   );
 }
