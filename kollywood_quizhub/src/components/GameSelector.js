@@ -10,9 +10,9 @@ import React, { useState } from "react";
  */
 const QUIZ_TYPES = [
   {
-    type: "facts",
-    title: "Kollywood Movie Facts",
-    description: "Answer general questions about Tamil cinema: actors, years, blockbusters.",
+    type: "timeline",
+    title: "Movie Timeline",
+    description: "Guess the release year of Kollywood movies. The answer is revealed only after your guess!",
     accent: "#ff0597"
   },
   {

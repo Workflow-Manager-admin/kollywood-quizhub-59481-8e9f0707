@@ -59,8 +59,18 @@ async function generateQuestions({ type, numQuestions }) {
     for (let movie of shuffle([...movies])) {
       if (questions.length >= numQuestions) break;
 
+      // Movie Timeline mode: guess the release year (formerly "facts")
+      if (type === "timeline") {
+        questions.push({
+          kind: "timeline",
+          q: `Guess the release year of "${movie.title}"`,
+          opts: genYearChoices(movie.release_date),
+          answer: (movie.release_date || "").slice(0, 4),
+          movie
+        });
+      }
       // Guess the Movie mode: add actor & year clue
-      if (type === "guess") {
+      else if (type === "guess") {
         // Fetch actor as clue (async). Choose sync fallback if not possible
         let actorName = "Kollywood actor";
         try {
@@ -234,6 +244,33 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
         marginBottom: q.kind === "guess" && q.poster ? 2 : 8,
         letterSpacing: "-0.7px"
       }}>{q.q}</h2>
+
+      {/* Movie Timeline UI */}
+      {q.kind === "timeline" && (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          background: "#f4f7fc",
+          borderRadius: 11,
+          border: "1.7px solid #c3e9c1",
+          boxShadow: "0 2px 12px -7px #39afb94a",
+          padding: "12px 18px 7px 18px",
+          minWidth: 220,
+          maxWidth: 390,
+          marginBottom: 10
+        }}>
+          <span style={{
+            fontSize: "1.07em",
+            fontWeight: 550,
+            color: "#169b9b",
+            marginBottom: 11
+          }}>
+            Place this movie on the Kollywood timeline!
+          </span>
+        </div>
+      )}
+
       {q.kind === "guess" && q.poster &&
         <img
           src={`https://image.tmdb.org/t/p/w400${q.poster}`}
@@ -371,6 +408,22 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
           );
         })}
       </div>
+      {/* For "timeline" mode, reveal correct answer and year label */}
+      {(q.kind === "timeline" && answers[currentIndex]) && (
+        <div style={{
+          margin: "10px 0 0 0",
+          padding: "8px 15px",
+          borderRadius: 7,
+          background: "#e6ffe6",
+          boxShadow: "0 1px 5px #23b92518",
+          color: "#1e5d23",
+          fontWeight: 550,
+          fontSize: "1.09em"
+        }}>
+          Actual Release Year: <span style={{ color: "#23b925", fontWeight: 700 }}>{q.answer}</span>
+        </div>
+      )}
+
       {!answers[currentIndex] && (
         <button
           className="btn btn-large"

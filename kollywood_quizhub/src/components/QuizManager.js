@@ -6,9 +6,9 @@ import React from "react";
 
 const QUIZ_TYPES = [
   {
-    type: "facts",
-    title: "Kollywood Movie Facts",
-    description: "Automatic questions about Kollywood (year, actor, hit movies) generated from TheMovieDB.",
+    type: "timeline",
+    title: "Movie Timeline",
+    description: "Guess the release year for Kollywood movies. See if you can order Tamil films on a timeline. Actual year is revealed after your guess; challenge your memory!",
   },
   {
     type: "guess",
