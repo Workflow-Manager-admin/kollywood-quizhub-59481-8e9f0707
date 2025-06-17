@@ -214,18 +214,66 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
     setShowCorrect(false);
   }, [currentIndex]);
 
+  // Helper for fuzzy string matching (for movie title input)
+  function isFuzzyMatch(userAns, correctAns) {
+    // Lowercase, remove extra spaces and symbols for naive normalization
+    const normalize = s => (s || "").toLowerCase().replace(/[^a-z0-9 ]/gi, "").replace(/\s+/g, " ").trim();
+    const normUser = normalize(userAns);
+    const normCorrect = normalize(correctAns);
+
+    // Simple check for close match: allow small typos (Levenshtein distance <=2)
+    function levenshtein(a, b) {
+      if (!a.length) return b.length;
+      if (!b.length) return a.length;
+      const dp = Array(a.length + 1).fill(null).map(() =>
+        Array(b.length + 1).fill(null)
+      );
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(
+            dp[i - 1][j] + 1,
+            dp[i][j - 1] + 1,
+            dp[i - 1][j - 1] + cost
+          );
+        }
+      }
+      return dp[a.length][b.length];
+    }
+
+    if (normUser === normCorrect) return true;
+    if (levenshtein(normUser, normCorrect) <= 2) return true;
+    // Accept if user answer contains all words of solution (reordered), for multiword titles
+    const correctSet = new Set(normCorrect.split(" "));
+    const userSet = new Set(normUser.split(" "));
+    if ([...correctSet].filter(w => userSet.has(w)).length >= correctSet.size - 1 && correctSet.size > 1) return true;
+    return false;
+  }
+
   // Handle answer selection and navigation
   const submitAnswer = () => {
     const q = questions[currentIndex];
-    // For timeline mode, require valid year (typed!), else default select logic
+
     if (q.kind === "timeline") {
       // Must have a 4-digit number for year
       if (!/^\d{4}$/.test(selected)) return;
+    } else if (q.kind === "guess") {
+      // Free text, require not-empty and at least 3 chars
+      if (!selected || selected.trim().length < 2) return;
     } else {
       if (!selected) return;
     }
+
     const userInput = selected;
-    const isCorrect = userInput === q.answer;
+    let isCorrect;
+    if (q.kind === "guess") {
+      isCorrect = isFuzzyMatch(userInput, q.answer);
+    } else {
+      isCorrect = userInput === q.answer;
+    }
+
     setAnswers([
       ...answers,
       {
@@ -238,7 +286,6 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
     setTimeout(() => {
       if (currentIndex === questions.length - 1) {
         const score = answers.concat([{ correct: isCorrect }]).filter(a => a.correct).length;
-        // Pass all results to parent for stats
         onFinish(
           {
             score,
@@ -466,8 +513,86 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
           <span style={{ color: "var(--text-gray)" }}>{q.clue}</span>
         </div>
       )}
-      {/* Options & Answer Controls, skip for timeline mode (now uses input above) */}
-      {q.kind !== "timeline" && (
+      {/* Render answer input/controls for Guess the Movie mode (free text), for Character/Description (MCQ), and legacy MCQ if any */}
+      {/* Timeline handled above */}
+      {q.kind === "guess" ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 10,
+            background: "#f5f6ff",
+            borderRadius: 8,
+            border: "1.4px solid #d5b7fd99",
+            boxShadow: "0 2px 13px -7px #ad23b93f",
+            padding: "14px 14px 12px 14px",
+            minWidth: 235,
+            maxWidth: 410,
+            width: "100%"
+          }}
+        >
+          <label
+            htmlFor="movie-guess-input"
+            style={{
+              fontWeight: 550,
+              color: "#0a0030",
+              marginBottom: 3,
+              fontSize: "1.05em",
+              alignSelf: "flex-start"
+            }}
+          >
+            Type the movie name:
+          </label>
+          <input
+            className="input"
+            style={{
+              marginTop: 0,
+              marginBottom: 2,
+              width: "96%",
+              fontSize: "1.16em",
+              textAlign: "center"
+            }}
+            type="text"
+            id="movie-guess-input"
+            placeholder="Enter movie name (not case sensitive)"
+            maxLength={70}
+            value={selected}
+            enterKeyHint="done"
+            autoFocus
+            onChange={e => {
+              setSelected(e.target.value);
+            }}
+            disabled={showCorrect || !!answers[currentIndex]}
+            aria-label="Type the movie name"
+            onKeyDown={e => {
+              if (e.key === "Enter" && !showCorrect && !answers[currentIndex] && selected.length > 1)
+                submitAnswer();
+            }}
+          />
+          {(showCorrect || answers[currentIndex]) && (
+            <div style={{
+              marginTop: 5,
+              color:
+                (answers[currentIndex]?.correct || (showCorrect && isFuzzyMatch(selected, q.answer)))
+                  ? "var(--success)"
+                  : "var(--secondary)",
+              fontWeight: 620,
+              fontSize: "1.09em"
+            }}>
+              {(answers[currentIndex]?.correct || (showCorrect && isFuzzyMatch(selected, q.answer)))
+                ? (
+                  <span>✔ Correct! <span style={{ color: "#23b925" }}>{q.answer}</span></span>
+                )
+                : (
+                  <span>✖ Incorrect. <span style={{ marginLeft: 6 }}>Answer:</span> <b style={{ color: "#23b925" }}>{q.answer}</b></span>
+                )
+              }
+            </div>
+          )}
+        </div>
+      ) : q.kind !== "timeline" ? (
         <div style={{
           display: "flex",
           flexDirection: "column",
@@ -520,8 +645,9 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
             );
           })}
         </div>
-      )}
+      ) : null}
 
+      {/* Action buttons for each input mode */}
       {!answers[currentIndex] && (
         <>
           {/* For timeline mode: enable only if a 4-digit number is entered */}
@@ -535,6 +661,20 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
                 minWidth: 115
               }}
               disabled={!/^\d{4}$/.test(selected)}
+              onClick={submitAnswer}
+            >
+              {currentIndex === questions.length - 1 ? "Finish" : "Next →"}
+            </button>
+          ) : q.kind === "guess" ? (
+            <button
+              className="btn btn-large"
+              style={{
+                background: selected && selected.trim().length > 1 ? "var(--secondary)" : "#eee",
+                color: selected && selected.trim().length > 1 ? "#fff" : "var(--text-gray)",
+                marginTop: 9,
+                minWidth: 115
+              }}
+              disabled={!selected || selected.trim().length < 2}
               onClick={submitAnswer}
             >
               {currentIndex === questions.length - 1 ? "Finish" : "Next →"}
