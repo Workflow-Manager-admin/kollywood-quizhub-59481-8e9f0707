@@ -217,13 +217,20 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
   // Handle answer selection and navigation
   const submitAnswer = () => {
     const q = questions[currentIndex];
-    if (!selected) return;
-    const isCorrect = selected === q.answer;
+    // For timeline mode, require valid year (typed!), else default select logic
+    if (q.kind === "timeline") {
+      // Must have a 4-digit number for year
+      if (!/^\d{4}$/.test(selected)) return;
+    } else {
+      if (!selected) return;
+    }
+    const userInput = selected;
+    const isCorrect = userInput === q.answer;
     setAnswers([
       ...answers,
       {
         question: q,
-        userAnswer: selected,
+        userAnswer: userInput,
         correct: isCorrect,
       }
     ]);
@@ -236,7 +243,7 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
           {
             score,
             max: questions.length,
-            answers: [...answers, { question: q, userAnswer: selected, correct: isCorrect }]
+            answers: [...answers, { question: q, userAnswer: userInput, correct: isCorrect }]
           },
           { questions }
         );
@@ -274,29 +281,92 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
         letterSpacing: "-0.7px"
       }}>{q.q}</h2>
 
-      {/* Movie Timeline UI */}
+      {/* Movie Timeline UI (movie name is question, player types year) */}
       {q.kind === "timeline" && (
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          background: "#f4f7fc",
-          borderRadius: 11,
-          border: "1.7px solid #c3e9c1",
-          boxShadow: "0 2px 12px -7px #39afb94a",
-          padding: "12px 18px 7px 18px",
-          minWidth: 220,
-          maxWidth: 390,
-          marginBottom: 10
-        }}>
-          <span style={{
-            fontSize: "1.07em",
-            fontWeight: 550,
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            background: "#f4f7fc",
+            borderRadius: 11,
+            border: "1.7px solid #c3e9c1",
+            boxShadow: "0 2px 12px -7px #39afb94a",
+            padding: "20px 18px 18px 18px",
+            minWidth: 260,
+            maxWidth: 410,
+            marginBottom: 10,
+            marginTop: 8
+          }}
+        >
+          <div style={{
+            fontSize: "1.23em",
+            fontWeight: 600,
             color: "#169b9b",
-            marginBottom: 11
+            marginBottom: 8,
+            letterSpacing: "-0.8px"
           }}>
-            Place this movie on the Kollywood timeline!
+            <span role="img" aria-label="film">🎬</span> Movie Name:
+          </div>
+          <div
+            style={{
+              fontWeight: 680,
+              fontSize: "1.35em",
+              color: "var(--accent)",
+              margin: "0 0 9px 0",
+              letterSpacing: "-1px"
+            }}
+            tabIndex={0}
+            aria-label={`Movie title is ${q.movie?.title || "unknown"}`}
+          >
+            {q.movie?.title || "Movie Title Not Found"}
+          </div>
+          <span
+            style={{
+              fontSize: "1.1em",
+              color: "#286666",
+              fontWeight: 510
+            }}
+          >
+            Type the release year:
           </span>
+          <input
+            className="input"
+            style={{
+              marginTop: 8,
+              marginBottom: 3,
+              width: 110,
+              fontSize: "1.18em",
+              textAlign: "center"
+            }}
+            type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="e.g. 1999"
+            maxLength={4}
+            value={selected}
+            onChange={e => {
+              const v = e.target.value.slice(0, 4);
+              // Only digits
+              if (/^\d{0,4}$/.test(v)) setSelected(v);
+            }}
+            disabled={showCorrect || !!answers[currentIndex]}
+            aria-label="Type movie release year"
+            autoFocus
+          />
+          {(showCorrect || answers[currentIndex]) && (
+            <div style={{
+              marginTop: 7,
+              color: selected === q.answer ? "var(--success)" : "var(--secondary)",
+              fontWeight: 650,
+              fontSize: "1.09em"
+            }}>
+              {selected === q.answer
+                ? <span>✔ Correct! <span style={{ color: "#23b925" }}>{q.answer}</span></span>
+                : <span>✖ Incorrect. <span style={{ marginLeft: 6 }}>Actual year:</span> <b style={{ color: "#23b925" }}>{q.answer}</b></span>
+              }
+            </div>
+          )}
         </div>
       )}
 
@@ -396,88 +466,95 @@ export function QuizGame({ config, user, onFinish, onCancel }) {
           <span style={{ color: "var(--text-gray)" }}>{q.clue}</span>
         </div>
       )}
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 13,
-        marginBottom: 10,
-        alignItems: "center",
-        width: "100%",
-        maxWidth: 420
-      }}>
-        {q.opts.map(opt => {
-          const answered = showCorrect || answers[currentIndex];
-          let bg = "#f4f6fa";
-          let color = "var(--accent)";
-          let border = "1.6px solid #c7c7d0";
-          if (answered) {
-            if (opt === q.answer) {
-              bg = "#dafae2";
-              color = "var(--success)";
-              border = "2px solid #17a856";
-            }
-            else if (opt === selected) {
-              bg = "#ffe3ef";
-              color = "var(--secondary)";
-              border = "2px solid var(--secondary)";
-            }
-          } else if (opt === selected) {
-            bg = "var(--secondary)";
-            color = "#fff";
-            border = "2.2px solid var(--secondary)";
-          }
-          return (
-            <button
-              className="btn"
-              key={opt}
-              tabIndex={0}
-              onClick={() => setSelected(opt)}
-              disabled={showCorrect || !!answers[currentIndex]}
-              style={{
-                minWidth: 190,
-                background: bg,
-                color,
-                border,
-                marginBottom: 2,
-                fontWeight: 530,
-                letterSpacing: 0,
-                fontSize: "1.1rem",
-                boxShadow: bg === "var(--secondary)" ? "0 4px 16px -7px #ff05977b" : "none"
-              }}
-            >{opt}</button>
-          );
-        })}
-      </div>
-      {/* For "timeline" mode, reveal correct answer and year label */}
-      {(q.kind === "timeline" && answers[currentIndex]) && (
+      {/* Options & Answer Controls, skip for timeline mode (now uses input above) */}
+      {q.kind !== "timeline" && (
         <div style={{
-          margin: "10px 0 0 0",
-          padding: "8px 15px",
-          borderRadius: 7,
-          background: "#e6ffe6",
-          boxShadow: "0 1px 5px #23b92518",
-          color: "#1e5d23",
-          fontWeight: 550,
-          fontSize: "1.09em"
+          display: "flex",
+          flexDirection: "column",
+          gap: 13,
+          marginBottom: 10,
+          alignItems: "center",
+          width: "100%",
+          maxWidth: 420
         }}>
-          Actual Release Year: <span style={{ color: "#23b925", fontWeight: 700 }}>{q.answer}</span>
+          {q.opts.map(opt => {
+            const answered = showCorrect || answers[currentIndex];
+            let bg = "#f4f6fa";
+            let color = "var(--accent)";
+            let border = "1.6px solid #c7c7d0";
+            if (answered) {
+              if (opt === q.answer) {
+                bg = "#dafae2";
+                color = "var(--success)";
+                border = "2px solid #17a856";
+              }
+              else if (opt === selected) {
+                bg = "#ffe3ef";
+                color = "var(--secondary)";
+                border = "2px solid var(--secondary)";
+              }
+            } else if (opt === selected) {
+              bg = "var(--secondary)";
+              color = "#fff";
+              border = "2.2px solid var(--secondary)";
+            }
+            return (
+              <button
+                className="btn"
+                key={opt}
+                tabIndex={0}
+                onClick={() => setSelected(opt)}
+                disabled={showCorrect || !!answers[currentIndex]}
+                style={{
+                  minWidth: 190,
+                  background: bg,
+                  color,
+                  border,
+                  marginBottom: 2,
+                  fontWeight: 530,
+                  letterSpacing: 0,
+                  fontSize: "1.1rem",
+                  boxShadow: bg === "var(--secondary)" ? "0 4px 16px -7px #ff05977b" : "none"
+                }}
+              >{opt}</button>
+            );
+          })}
         </div>
       )}
 
       {!answers[currentIndex] && (
-        <button
-          className="btn btn-large"
-          style={{
-            background: selected ? "var(--secondary)" : "#eee",
-            color: selected ? "#fff" : "var(--text-gray)",
-            marginTop: 10,
-            minWidth: 115
-          }}
-          disabled={!selected}
-          onClick={submitAnswer}
-        >
-          {currentIndex === questions.length - 1 ? "Finish" : "Next →"}
-        </button>
+        <>
+          {/* For timeline mode: enable only if a 4-digit number is entered */}
+          {q.kind === "timeline" ? (
+            <button
+              className="btn btn-large"
+              style={{
+                background: /^\d{4}$/.test(selected) ? "var(--secondary)" : "#eee",
+                color: /^\d{4}$/.test(selected) ? "#fff" : "var(--text-gray)",
+                marginTop: 12,
+                minWidth: 115
+              }}
+              disabled={!/^\d{4}$/.test(selected)}
+              onClick={submitAnswer}
+            >
+              {currentIndex === questions.length - 1 ? "Finish" : "Next →"}
+            </button>
+          ) : (
+            <button
+              className="btn btn-large"
+              style={{
+                background: selected ? "var(--secondary)" : "#eee",
+                color: selected ? "#fff" : "var(--text-gray)",
+                marginTop: 10,
+                minWidth: 115
+              }}
+              disabled={!selected}
+              onClick={submitAnswer}
+            >
+              {currentIndex === questions.length - 1 ? "Finish" : "Next →"}
+            </button>
+          )}
+        </>
       )}
       <button className="btn"
         onClick={onCancel}
